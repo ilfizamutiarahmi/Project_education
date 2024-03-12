@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:project_education/view/SplashScreen.dart';
+import 'package:project_education/view/listBerita.dart';
 
 
 void main() {
@@ -20,6 +21,14 @@ class MyApp extends StatelessWidget {
       ),
       home: SplashScreen(),
     );
+  }
+}
+class MyHomePage extends StatelessWidget {
+  const MyHomePage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Placeholder();
   }
 }
 

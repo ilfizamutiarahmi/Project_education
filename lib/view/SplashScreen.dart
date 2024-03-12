@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 
 import 'package:project_education/main.dart';
+import 'package:project_education/view/login.dart';
 
 
 class SplashScreen extends StatefulWidget {
@@ -21,7 +22,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
   _goHome() async {
     await Future.delayed(const Duration(milliseconds: 5000),() {});
-    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>MyHomePage(title: 'Flutter Demo')));
+    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>LoginScreen()));
   }
 
 
