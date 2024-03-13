@@ -2,9 +2,50 @@ import 'package:flutter/material.dart';
 
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:project_education/main.dart';
 import 'package:project_education/view/Register.dart';
 import 'package:project_education/view/listBerita.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+class SharedPreferencesHelper {
+  static const String userIdKey = 'user_id';
+  static const String userNameKey = 'user_name';
+  static const String userEmailKey = 'user_email';
+
+
+  static Future<void> saveUserProfile(Map<String, dynamic> user) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setInt(userIdKey, user['id']);
+    prefs.setString(userNameKey, user['name']);
+    prefs.setString(userEmailKey, user['email']);
+  }
+
+  static Future<int?> getUserId() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getInt(userIdKey);
+  }
+
+  static Future<String?> getUserName() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString(userNameKey);
+  }
+
+  static Future<String?> getUserEmail() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString(userEmailKey);
+  }
+
+  static Future<bool> isLoggedIn() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.containsKey(userIdKey);
+  }
+
+  static Future<void> logout() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.remove(userIdKey);
+    prefs.remove(userNameKey);
+    prefs.remove(userEmailKey);
+  }
+}
 
 class ApiService {
   final String baseUrl;
@@ -25,8 +66,6 @@ class ApiService {
   }
 }
 
-
-
 class LoginScreen extends StatefulWidget {
   @override
   _LoginScreenState createState() => _LoginScreenState();
@@ -41,9 +80,12 @@ class _LoginScreenState extends State<LoginScreen> {
     final email = emailController.text;
     final password = passwordController.text;
 
+
     try {
       final response = await apiService.login(email, password);
+      final user = response['user'] as Map<String, dynamic>;
 
+      await SharedPreferencesHelper.saveUserProfile(user);
      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>ListBerita()));
       print('Login successful: $response');
     } catch (e) {
