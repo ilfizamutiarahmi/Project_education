@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:project_education/view/home.dart';
 import 'dart:async';
 
+import 'package:project_education/main.dart';
+import 'package:project_education/view/login.dart';
+
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
@@ -13,13 +16,14 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
-    super.initState();
-    splashscreenStart();
+  _goHome();
+  super.initState();
+
   }
 
-  splashscreenStart() async {
-    var duration = const Duration(seconds: 5);
-    return Timer(duration, navigateToHome);
+  _goHome() async {
+    await Future.delayed(const Duration(milliseconds: 5000),() {});
+    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>LoginScreen()));
   }
 
   void navigateToHome() {
