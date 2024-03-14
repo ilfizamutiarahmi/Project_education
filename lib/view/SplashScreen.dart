@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:project_education/view/home.dart';
 import 'dart:async';
 
 
@@ -22,10 +23,10 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   void navigateToHome() {
-    // Navigator.pushReplacement(
-    //   // context,
-    //   // MaterialPageRoute(builder: (context) => Home()),
-    // );
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => Home()),
+    );
   }
 
   @override
