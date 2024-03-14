@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:project_education/models/model_berita.dart'; // Pastikan untuk mengganti dengan nama file yang sesuai dengan model Anda
+import 'package:project_education/model/model_berita.dart'; // Pastikan untuk mengganti dengan nama file yang sesuai dengan model Anda
 import 'package:http/http.dart' as http;
 
 class Home extends StatefulWidget {
@@ -136,7 +136,7 @@ class _HomeState extends State<Home> {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.book),
-            label: 'Library',
+            label: 'Pegawai',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),

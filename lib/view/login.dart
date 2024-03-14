@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:project_education/view/Register.dart';
 import 'package:project_education/view/listBerita.dart';
+import 'package:project_education/view/home.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SharedPreferencesHelper {
@@ -86,7 +87,7 @@ class _LoginScreenState extends State<LoginScreen> {
       final user = response['user'] as Map<String, dynamic>;
 
       await SharedPreferencesHelper.saveUserProfile(user);
-     Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>ListBerita()));
+     Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>Home()));
       print('Login successful: $response');
     } catch (e) {
 
