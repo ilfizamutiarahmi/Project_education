@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:project_education/model/model_berita.dart'; // Pastikan untuk mengganti dengan nama file yang sesuai dengan model Anda
 import 'package:http/http.dart' as http;
+import 'package:project_education/view/login.dart';
 import 'package:project_education/view/user_profile.dart';
 
 import '../model/api_service.dart';
@@ -107,10 +108,13 @@ class _HomeState extends State<Home> {
             icon: Icon(Icons.refresh),
           ),
           InkWell(
-            onTap: _goToUserProfile,
+            onTap: () {
+              Navigator.pushReplacement(context,
+                  MaterialPageRoute(builder: (context) => LoginScreen()));
+            },
             child: Padding(
               padding: const EdgeInsets.all(8.0),
-              child: Image.asset("image/avatar.png", height: 50),
+              child: Image.asset("image/logout.png", height: 50),
             ),
           ),
         ],
