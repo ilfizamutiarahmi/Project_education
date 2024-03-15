@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:project_education/model/api_service.dart';
+import 'package:project_education/view/home.dart';
 
 class UserProfile extends StatefulWidget {
   final int userId;
@@ -7,7 +8,8 @@ class UserProfile extends StatefulWidget {
   final String userEmail;
   final ApiService apiService;
 
-  const UserProfile({Key? key, required this.userId, required this.userName, required this.userEmail, required this.apiService}) : super(key: key);
+
+  const UserProfile({Key? key, required this.userId, required this.userName, required this.userEmail, required this.apiService,}) : super(key: key);
 
   @override
   State<UserProfile> createState() => _UserProfileState();
@@ -16,6 +18,7 @@ class UserProfile extends StatefulWidget {
 class _UserProfileState extends State<UserProfile> {
   late TextEditingController _nameController;
   late TextEditingController _emailController;
+
 
   @override
   void initState() {
@@ -73,6 +76,8 @@ class _UserProfileState extends State<UserProfile> {
           ],
         ),
       ),
+
+
     );
   }
   @override

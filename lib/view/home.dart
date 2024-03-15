@@ -3,7 +3,6 @@ import 'package:project_education/model/model_berita.dart'; // Pastikan untuk me
 import 'package:http/http.dart' as http;
 import 'package:project_education/view/login.dart';
 import 'package:project_education/view/user_profile.dart';
-
 import '../model/api_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -82,7 +81,6 @@ class _HomeState extends State<Home> {
   }
 
   void _filterBeritaList(String query) {
-    // Filter list based on query
     List<Datum> filteredBeritaList = _beritaList
         .where((berita) =>
             berita.title.toLowerCase().contains(query.toLowerCase()) ||
@@ -107,16 +105,10 @@ class _HomeState extends State<Home> {
             },
             icon: Icon(Icons.refresh),
           ),
-          InkWell(
-            onTap: () {
-              Navigator.pushReplacement(context,
-                  MaterialPageRoute(builder: (context) => LoginScreen()));
-            },
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Image.asset("image/logout.png", height: 50),
-            ),
-          ),
+          IconButton(onPressed: (){
+            Navigator.pushReplacement(context,
+                MaterialPageRoute(builder: (context) => LoginScreen()));
+          }, icon: Icon(Icons.logout))
         ],
       ),
       body: Padding(
@@ -152,7 +144,7 @@ class _HomeState extends State<Home> {
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(10),
                                 child: Image.network(
-                                  'http://127.0.0.1:8000/api/berita/${result.image}',
+                                  result.image,
                                   fit: BoxFit.fill,
                                   width: double.infinity,
                                   height: 200,
