@@ -6,6 +6,8 @@ import 'package:project_education/view/user_profile.dart';
 import '../model/api_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'listKaryawan.dart';
+
 Future<String?> getUserName() async {
   final SharedPreferences prefs = await SharedPreferences.getInstance();
   return prefs.getString('user_name');
@@ -52,6 +54,20 @@ class _HomeState extends State<Home> {
       context,
       MaterialPageRoute(
         builder: (context) => UserProfile(
+          userId: widget.userId,
+          userName: userName!,
+          userEmail: userEmail!,
+          apiService: ApiService(baseUrl: 'http://127.0.0.1:8000/api'),
+        ),
+      ),
+    );
+  }
+
+  void _goToListKaryawan() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ListKaryawan(
           userId: widget.userId,
           userName: userName!,
           userEmail: userEmail!,
@@ -173,6 +189,9 @@ class _HomeState extends State<Home> {
             _currentIndex = index;
             if(_currentIndex == 2){
              _goToUserProfile();
+            }
+            if(_currentIndex == 1){
+              _goToListKaryawan();
             }
           });
         },
