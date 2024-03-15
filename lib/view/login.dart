@@ -1,71 +1,9 @@
 import 'package:flutter/material.dart';
-
-import 'dart:convert';
-import 'package:http/http.dart' as http;
 import 'package:project_education/view/Register.dart';
-import 'package:project_education/view/listBerita.dart';
 import 'package:project_education/view/home.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
-class SharedPreferencesHelper {
-  static const String userIdKey = 'user_id';
-  static const String userNameKey = 'user_name';
-  static const String userEmailKey = 'user_email';
-
-
-  static Future<void> saveUserProfile(Map<String, dynamic> user) async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setInt(userIdKey, user['id']);
-    prefs.setString(userNameKey, user['name']);
-    prefs.setString(userEmailKey, user['email']);
-  }
-
-  static Future<int?> getUserId() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getInt(userIdKey);
-  }
-
-  static Future<String?> getUserName() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getString(userNameKey);
-  }
-
-  static Future<String?> getUserEmail() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getString(userEmailKey);
-  }
-
-  static Future<bool> isLoggedIn() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.containsKey(userIdKey);
-  }
-
-  static Future<void> logout() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.remove(userIdKey);
-    prefs.remove(userNameKey);
-    prefs.remove(userEmailKey);
-  }
-}
-
-class ApiService {
-  final String baseUrl;
-
-  ApiService({required this.baseUrl});
-
-  Future<Map<String, dynamic>> login(String email, String password) async {
-    final response = await http.post(
-      Uri.parse('$baseUrl/login'),
-      body: {'email': email, 'password': password},
-    );
-
-    if (response.statusCode == 200) {
-      return json.decode(response.body);
-    } else {
-      throw Exception('Failed to login');
-    }
-  }
-}
+import 'package:project_education/view/listBerita.dart';
+import 'package:project_education/model/sharedpreferences.dart';
+import 'package:project_education/model/api_service.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -81,19 +19,37 @@ class _LoginScreenState extends State<LoginScreen> {
     final email = emailController.text;
     final password = passwordController.text;
 
-
     try {
       final response = await apiService.login(email, password);
       final user = response['user'] as Map<String, dynamic>;
+      final userId = user['id'];
 
       await SharedPreferencesHelper.saveUserProfile(user);
-     Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>Home()));
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => Home(userId: userId, apiService: ApiService(baseUrl: 'http://127.0.0.1:8000/api/'),)),
+      );
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Login successful'),
+          backgroundColor: Colors.green,
+        ),
+      );
+
       print('Login successful: $response');
     } catch (e) {
-
       print('Login failed: $e');
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Login failed: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
     }
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -119,9 +75,9 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
             SizedBox(height: 16),
             MaterialButton(
-              onPressed: _login,
-              color: Colors.green,
-              child: Text('Login', style: TextStyle(color: Colors.white),)),
+                onPressed: _login,
+                color: Colors.green,
+                child: Text('Login', style: TextStyle(color: Colors.white),)),
             SizedBox(height: 17),
             TextButton(
                 onPressed: () {

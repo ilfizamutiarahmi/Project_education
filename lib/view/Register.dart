@@ -1,40 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
-
-
+import 'package:project_education/model/api_service.dart';
 import 'package:project_education/view/login.dart';
 
-class ApiService {
-  final String baseUrl;
-
-  ApiService({required this.baseUrl});
-
-  Future<Map<String, dynamic>> register(String name,String email, String password) async {
-    final response = await http.post(
-      Uri.parse('$baseUrl/register'),
-      body: {'name': name, 'email': email, 'password': password},
-    );
-
-    final decodedResponse = json.decode(response.body);
-    if (response.statusCode == 201) {
-      return json.decode(response.body);
-    } else {
-      throw Exception('Failed to Register');
-    }
-  }
-}
-
-
 class RegisterPage extends StatefulWidget {
-  const RegisterPage({super.key});
+  const RegisterPage({Key? key}) : super(key: key);
 
   @override
   State<RegisterPage> createState() => _RegisterPageState();
 }
 
 class _RegisterPageState extends State<RegisterPage> {
-
   final ApiService apiService = ApiService(baseUrl: 'http://127.0.0.1:8000/api');
   final TextEditingController nameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
@@ -47,17 +22,27 @@ class _RegisterPageState extends State<RegisterPage> {
 
     try {
       final response = await apiService.register(name, email, password);
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => LoginScreen()));
       final user = response['user'];
-      final userName = user['name'];
-      final userEmail = user['email'];
-      print('Registration successful for $userName with email $userEmail');
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => LoginScreen()));
 
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Registration successful for $name with email $email'),
+          backgroundColor: Colors.green,
+        ),
+      );
     } catch (e) {
       // Handle registration failure
       print('Registration failed: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Registration failed: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
     }
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -87,9 +72,10 @@ class _RegisterPageState extends State<RegisterPage> {
               decoration: InputDecoration(labelText: 'Password', border: OutlineInputBorder()),
             ),
             SizedBox(height: 16),
-            MaterialButton(onPressed: _register,
-            child: Text('Register'),
-            color: Colors.blue,
+            MaterialButton(
+              onPressed: _register,
+              child: Text('Register'),
+              color: Colors.blue,
             ),
           ],
         ),

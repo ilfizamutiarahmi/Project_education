@@ -26,12 +26,12 @@ class _SplashScreenState extends State<SplashScreen> {
     Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>LoginScreen()));
   }
 
-  void navigateToHome() {
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => Home()),
-    );
-  }
+  // void navigateToHome() {
+  //   Navigator.pushReplacement(
+  //     context,
+  //     MaterialPageRoute(builder: (context) => Home()),
+  //   );
+  // }
 
   @override
   Widget build(BuildContext context) {

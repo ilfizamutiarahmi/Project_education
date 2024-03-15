@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:project_education/view/login.dart';
+import 'package:project_education/view/user_profile.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:project_education/model/api_service.dart';
+
 
 Future<String?> getUserName() async {
   final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -13,7 +16,10 @@ Future<String?> getUserEmail() async {
 }
 
 class ListBerita extends StatefulWidget {
-  const ListBerita({super.key});
+  final int userId;
+  final ApiService apiService;
+
+  const ListBerita({Key? key, required this.userId, required this.apiService}) : super(key: key);
 
   @override
   State<ListBerita> createState() => _ListBeritaState();
@@ -22,6 +28,7 @@ class ListBerita extends StatefulWidget {
 class _ListBeritaState extends State<ListBerita> {
   String? userName;
   String? userEmail;
+
 
   @override
   void initState() {
@@ -35,6 +42,20 @@ class _ListBeritaState extends State<ListBerita> {
     setState(() {});
   }
 
+  void _goToUserProfile() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => UserProfile(
+          userId: widget.userId,
+          userName: userName!,
+          userEmail: userEmail!,
+          apiService: ApiService(baseUrl: 'http://127.0.0.1:8000/api'),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -42,17 +63,8 @@ class _ListBeritaState extends State<ListBerita> {
         title: Text('Welcome to List News Page'),
         backgroundColor: Colors.blue,
         actions: [
-          if (userName != null && userEmail != null)
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [Text(userName!), Text(userEmail!)],
-              ),
-            ),
           InkWell(
             onTap: () {
-              
               Navigator.pushReplacement(context,
                   MaterialPageRoute(builder: (context) => LoginScreen()));
             },
@@ -61,7 +73,24 @@ class _ListBeritaState extends State<ListBerita> {
               child: Image.asset("image/logout.png", height: 50),
             ),
           ),
+          InkWell(
+            onTap: _goToUserProfile,
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Image.asset("image/avatar.png", height: 50),
+            ),
+          ),
         ],
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(widget.userId.toString())
+          ],
+        ),
       ),
     );
   }

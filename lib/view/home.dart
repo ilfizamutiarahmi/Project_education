@@ -1,13 +1,34 @@
 import 'package:flutter/material.dart';
 import 'package:project_education/model/model_berita.dart'; // Pastikan untuk mengganti dengan nama file yang sesuai dengan model Anda
 import 'package:http/http.dart' as http;
+import 'package:project_education/view/user_profile.dart';
+
+import '../model/api_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+Future<String?> getUserName() async {
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  return prefs.getString('user_name');
+}
+
+Future<String?> getUserEmail() async {
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  return prefs.getString('user_email');
+}
 
 class Home extends StatefulWidget {
+  final int userId;
+  final ApiService apiService;
+
+  const Home({Key? key, required this.userId, required this.apiService}) : super(key: key);
+
   @override
   _HomeState createState() => _HomeState();
 }
 
 class _HomeState extends State<Home> {
+  String? userName;
+  String? userEmail;
   int _currentIndex = 0;
   List<Datum> _beritaList = [];
   late TextEditingController _searchController;
@@ -15,8 +36,29 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     super.initState();
+    _loadUserInfo();
     _searchController = TextEditingController();
     _fetchBerita();
+  }
+
+  Future<void> _loadUserInfo() async {
+    userName = await getUserName();
+    userEmail = await getUserEmail();
+    setState(() {});
+  }
+
+  void _goToUserProfile() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => UserProfile(
+          userId: widget.userId,
+          userName: userName!,
+          userEmail: userEmail!,
+          apiService: ApiService(baseUrl: 'http://127.0.0.1:8000/api'),
+        ),
+      ),
+    );
   }
 
   Future<void> _fetchBerita() async {
@@ -63,6 +105,13 @@ class _HomeState extends State<Home> {
               _fetchBerita();
             },
             icon: Icon(Icons.refresh),
+          ),
+          InkWell(
+            onTap: _goToUserProfile,
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Image.asset("image/avatar.png", height: 50),
+            ),
           ),
         ],
       ),
@@ -126,13 +175,16 @@ class _HomeState extends State<Home> {
         onTap: (int index) {
           setState(() {
             _currentIndex = index;
-            // Handle navigation here
+            if(_currentIndex == 2){
+             _goToUserProfile();
+            }
           });
         },
         items: [
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
             label: 'Home',
+
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.book),
