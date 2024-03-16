@@ -5,10 +5,23 @@ import '../model/karyawan_model.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
+import 'addEditKaryawan.dart';
 import 'detailKaryawan.dart';
 
 class ListKaryawan extends StatefulWidget {
-  const ListKaryawan({super.key, required int userId, required String userName, required String userEmail, required ApiService apiService});
+  // const ListKaryawan({super.key, required int userId, required String userName, required String userEmail, required ApiService apiService});
+  const ListKaryawan({
+    Key? key,
+    required this.userId,
+    required this.userName,
+    required this.userEmail,
+    required this.apiService,
+  }) : super(key: key);
+
+  final int userId;
+  final String userName;
+  final String userEmail;
+  final ApiService apiService;
 
   @override
   _ListKaryawan createState() => _ListKaryawan();
@@ -19,7 +32,7 @@ class _ListKaryawan extends State<ListKaryawan> {
   List<dynamic> _karyawanList = [];
   List<dynamic> _filteredKaryawanList = [];
 
-  Datum? get result => null;
+  // Datum? get result => null;
 
   @override
   void initState() {
@@ -55,6 +68,19 @@ class _ListKaryawan extends State<ListKaryawan> {
       appBar: AppBar(
         title: Text('Search Pegawai'),
         backgroundColor: Colors.cyan,
+        actions: [
+          IconButton(
+            icon: Icon(Icons.add), // Icon untuk create (tambah karyawan)
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => AddEditKaryawanPage(apiService: widget.apiService),
+                ),
+              );
+            },
+          ),
+        ],
       ),
       body: Column(
         children: <Widget>[
@@ -78,18 +104,39 @@ class _ListKaryawan extends State<ListKaryawan> {
               itemBuilder: (context, index) {
                 final karyawan = _filteredKaryawanList[index];
                 return Card(
-
                   child: ListTile(
                     onTap: () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => PageDetailKaryawan(karyawan),
+                          builder: (context) => DetailKaryawanPage(karyawan: karyawan),
                         ),
                       );
                     },
                     title: Text(karyawan['name']),
                     subtitle: Text(karyawan['no_bp']),
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        IconButton(
+                          icon: Icon(Icons.edit), // Icon untuk update (edit karyawan)
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => AddEditKaryawanPage(apiService: widget.apiService, karyawan: karyawan),
+                              ),
+                            );
+                          },
+                        ),
+                        IconButton(
+                          icon: Icon(Icons.delete), // Icon untuk delete (hapus karyawan)
+                          onPressed: () {
+                            // Tambahkan logika untuk menghapus karyawan
+                          },
+                        ),
+                      ],
+                    ),
                   ),
                 );
               },
