@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:project_education/model/api_service.dart';
+import 'package:project_education/view/addKaryawan.dart';
 
 import '../model/karyawan_model.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
-import 'addEditKaryawan.dart';
+// import 'addEditKaryawan.dart';
 import 'detailKaryawan.dart';
 
 class ListKaryawan extends StatefulWidget {
@@ -75,7 +76,7 @@ class _ListKaryawan extends State<ListKaryawan> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => AddEditKaryawanPage(apiService: widget.apiService),
+                  builder: (context) => CreatePage(),
                 ),
               );
             },
@@ -118,20 +119,74 @@ class _ListKaryawan extends State<ListKaryawan> {
                     trailing: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        IconButton(
-                          icon: Icon(Icons.edit), // Icon untuk update (edit karyawan)
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => AddEditKaryawanPage(apiService: widget.apiService, karyawan: karyawan),
-                              ),
-                            );
-                          },
-                        ),
+                        // IconButton(
+                        //   icon: Icon(Icons.edit), // Icon untuk update (edit karyawan)
+                        //   onPressed: () {
+                        //     Navigator.push(
+                        //       context,
+                        //       MaterialPageRoute(
+                        //         builder: (context) => AddEditKaryawanPage(apiService: widget.apiService, karyawan: karyawan),
+                        //       ),
+                        //     );
+                        //   },
+                        // ),
                         IconButton(
                           icon: Icon(Icons.delete), // Icon untuk delete (hapus karyawan)
                           onPressed: () {
+                            showDialog(
+                              context: context,
+                              builder: (context) {
+                                return AlertDialog(
+                                  title: Text('Konfirmasi'),
+                                  content: Text('Anda yakin ingin menghapus ${karyawan.name}?'),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () => Navigator.pop(context),
+                                      child: Text('Batal'),
+                                    ),
+                                    TextButton(
+                                      onPressed: () async {
+                                        try {
+                                          // await ApiService.deleteKaryawan(karyawan.id);
+                                          Navigator.pop(context); // Tutup dialog
+                                          // Refresh halaman setelah penghapusan berhasil
+                                          Navigator.pushReplacement(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) => ListKaryawan(
+                                                userId: widget.userId,
+                                                userName: widget.userName,
+                                                userEmail: widget.userEmail,
+                                                apiService: widget.apiService,
+                                              ),
+                                            ),
+                                          );
+                                        } catch (error) {
+                                          showDialog(
+                                            context: context,
+                                            builder: (context) {
+                                              return AlertDialog(
+                                                title: Text('Error'),
+                                                content: Text('Gagal menghapus karyawan: $error'),
+                                                actions: <Widget>[
+                                                  TextButton(
+                                                    onPressed: () {
+                                                      Navigator.of(context).pop();
+                                                    },
+                                                    child: Text('OK'),
+                                                  ),
+                                                ],
+                                              );
+                                            },
+                                          );
+                                        }
+                                      },
+                                      child: Text('Hapus'),
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
                             // Tambahkan logika untuk menghapus karyawan
                           },
                         ),

@@ -18,45 +18,13 @@ class ModelKaryawan {
     result: List<Karyawan>.from(json["data"].map((x) => Karyawan.fromJson(x))),
   );
 
-  // Map<String, dynamic> toJson() => {
-  //   "message": message,
-  //   "result": List<dynamic>.from(result.map((x) => x.toJson())),
-  // };
+  Map<String, dynamic> toJson() => {
+    "message": message,
+    "result": List<dynamic>.from(result.map((x) => x.toJson())),
+  };
 
 
 }
-
-// class Datum {
-//   String name;
-//   String no_bp;
-//   String no_hp;
-//   String email;
-//   DateTime input_date;
-//
-//   Datum({
-//     required this.name,
-//     required this.no_bp,
-//     required this.no_hp,
-//     required this.email,
-//     required this.input_date,
-//   });
-//
-//   factory Datum.fromJson(Map<String, dynamic> json) => Datum(
-//     name: json["name"],
-//     no_bp: json["no_bp"],
-//     no_hp: json["no_hp"],
-//     email: json["email"],
-//     input_date: DateTime.parse(json["input_date"]),
-//   );
-//
-//   Map<String, dynamic> toJson() => {
-//     "name": name,
-//     "no_bp": no_bp,
-//     "no_hp": no_hp,
-//     "email": email,
-//     "input_date": input_date.toIso8601String(),
-//   };
-// }
 
 class Karyawan {
   final String name;
@@ -70,18 +38,27 @@ class Karyawan {
     required this.no_bp,
     required this.no_hp,
     required this.email,
-    required this.input_date,
-  });
+    // required this.input_date,
+    DateTime? input_date,
+  }) : input_date = input_date ?? DateTime.now();
 
-  factory Karyawan.fromJson(Map<String, dynamic> json) {
-    return Karyawan(
-      name: json['name'],
-      no_bp: json['no_bp'],
-      no_hp: json['no_hp'],
-      email: json['email'],
-      input_date: json['input_date'],
-    );
-  }
+factory Karyawan.fromJson(Map<String, dynamic> json) {
+return Karyawan(
+name: json['name'],
+no_bp: json['no_bp'],
+no_hp: json['no_hp'],
+email: json['email'],
+input_date: DateTime.parse(json['input_date']),
+);
+}
+
+Map<String, dynamic> toJson() => {
+'name': name,
+'no_bp': no_bp,
+'no_hp': no_hp,
+'email': email,
+'input_date': input_date.toIso8601String(),
+};
 }
 
 

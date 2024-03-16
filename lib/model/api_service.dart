@@ -48,31 +48,6 @@ class ApiService {
       throw Exception('Failed to Register: ${response.body}');
     }
   }
-
-  // static Future<List<dynamic>> fetchKaryawan() async {
-  //   final response = await http.get(Uri.parse('$baseUrl/karyawan'));
-  //
-  //   if (response.statusCode == 200) {
-  //     final Map<String, dynamic> responseData = json.decode(response.body);
-  //     return responseData['result'];
-  //   } else {
-  //     throw Exception('Failed to load karyawan');
-  //   }
-  // }
-
-  // static Future<Map<String, dynamic>> addKaryawan(Map<String, dynamic> data) async {
-  //   final response = await http.post(
-  //     Uri.parse('http://127.0.0.1:8000/api/karyawan'),
-  //     body: jsonEncode(data),
-  //     headers: {'Content-Type': 'application/json'},
-  //   );
-  //
-  //   if (response.statusCode == 200) {
-  //     return jsonDecode(response.body);
-  //   } else {
-  //     throw Exception('Failed to add karyawan');
-  //   }
-  // }
   Future<Map<String, dynamic>> addKaryawan(String name, String email, String no_hp, String no_bp) async {
     final Uri uri = Uri.parse('$baseUrl/karyawan');
     final Map<String, String> body = {
@@ -127,5 +102,14 @@ class ApiService {
   //     throw Exception('Failed to delete karyawan');
   //   }
   // }
+  Future<void> deleteKaryawan(int id) async {
+    final response = await http.delete(
+      Uri.parse('$baseUrl/karyawan/$id'),
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception('Failed to delete karyawan');
+    }
+  }
 
 }
