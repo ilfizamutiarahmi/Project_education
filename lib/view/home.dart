@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:project_education/model/model_berita.dart'; // Pastikan untuk mengganti dengan nama file yang sesuai dengan model Anda
 import 'package:http/http.dart' as http;
+import 'package:project_education/view/listKaryawan.dart';
 import 'package:project_education/view/login.dart';
 import 'package:project_education/view/user_profile.dart';
 import '../model/api_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'listKaryawan.dart';
+import '../model/sharedpreferences.dart';
 
 Future<String?> getUserName() async {
   final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -43,14 +44,8 @@ class _HomeState extends State<Home> {
     _fetchBerita();
   }
 
-  Future<void> _loadUserInfo() async {
-    userName = await getUserName();
-    userEmail = await getUserEmail();
-    setState(() {});
-  }
-
-  void _goToUserProfile() {
-    Navigator.push(
+  void _goToUserProfile() async {
+    final result = await Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => UserProfile(
@@ -61,21 +56,35 @@ class _HomeState extends State<Home> {
         ),
       ),
     );
+
+    // Setelah kembali dari UserProfile, perbarui data pengguna jika ada perubahan
+    if (result != null && result['success'] == true) {
+      _loadUserInfo();
+    }
   }
 
-  void _goToListKaryawan() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => ListKaryawan(
-          userId: widget.userId,
-          userName: userName!,
-          userEmail: userEmail!,
-          apiService: ApiService(baseUrl: 'http://127.0.0.1:8000/api'),
-        ),
-      ),
-    );
+
+
+  Future<void> _loadUserInfo() async {
+    try {
+      final String? name = await SharedPreferencesHelper.getUserName();
+      final String? email = await SharedPreferencesHelper.getUserEmail();
+      if (name != null && email != null) {
+        setState(() {
+          userName = name;
+          userEmail = email;
+        });
+      } else {
+        print('Failed to load user info');
+      }
+    } catch (error) {
+      print('Error loading user info: $error');
+    }
   }
+
+
+
+
 
   Future<void> _fetchBerita() async {
     try {
@@ -99,8 +108,8 @@ class _HomeState extends State<Home> {
   void _filterBeritaList(String query) {
     List<Datum> filteredBeritaList = _beritaList
         .where((berita) =>
-            berita.title.toLowerCase().contains(query.toLowerCase()) ||
-            berita.content.toLowerCase().contains(query.toLowerCase()))
+    berita.title.toLowerCase().contains(query.toLowerCase()) ||
+        berita.content.toLowerCase().contains(query.toLowerCase()))
         .toList();
     setState(() {
       _beritaList = filteredBeritaList;
@@ -121,10 +130,15 @@ class _HomeState extends State<Home> {
             },
             icon: Icon(Icons.refresh),
           ),
+          // IconButton(onPressed: (){
+          //   Navigator.push(context,
+          //       MaterialPageRoute(builder: (context) => GaleriPage()));
+          // }, icon: Icon(Icons.image)
+          // ),
           IconButton(onPressed: (){
             Navigator.pushReplacement(context,
                 MaterialPageRoute(builder: (context) => LoginScreen()));
-          }, icon: Icon(Icons.logout))
+          }, icon: Icon(Icons.logout)),
         ],
       ),
       body: Padding(
@@ -149,9 +163,14 @@ class _HomeState extends State<Home> {
                   itemBuilder: (context, index) {
                     Datum result = _beritaList[index];
                     return GestureDetector(
-                      onTap: () {
-                        // Handle onTap event here
-                      },
+                      // onTap: () {
+                      //   Navigator.push(
+                      //     context,
+                      //     MaterialPageRoute(
+                      //       builder: (context) => DetailBerita(data: result),
+                      //     ),
+                      //   );
+                      // },
                       child: Card(
                         child: Column(
                           children: [
@@ -160,7 +179,7 @@ class _HomeState extends State<Home> {
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(10),
                                 child: Image.network(
-                                  result.image,
+                                  'http://127.0.0.1:8000/storage/${result.image}',
                                   fit: BoxFit.fill,
                                   width: double.infinity,
                                   height: 200,
@@ -169,7 +188,8 @@ class _HomeState extends State<Home> {
                             ),
                             ListTile(
                               title: Text(result.title),
-                              subtitle: Text(result.content),
+                              subtitle: Text(result.content,
+                                maxLines: 2,),
                             ),
                           ],
                         ),
@@ -187,11 +207,14 @@ class _HomeState extends State<Home> {
         onTap: (int index) {
           setState(() {
             _currentIndex = index;
-            if(_currentIndex == 2){
-             _goToUserProfile();
+            if(_currentIndex == 0){
+              // Handler untuk indeks 0 (Home)
             }
-            if(_currentIndex == 1){
-              _goToListKaryawan();
+            else if(_currentIndex == 1){
+              Navigator.push(context, MaterialPageRoute(builder: (context)=>KaryawanPage()));
+            }
+            else if(_currentIndex == 2){
+              _goToUserProfile(); // Handler untuk indeks 2 (Profile)
             }
           });
         },
@@ -199,7 +222,6 @@ class _HomeState extends State<Home> {
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
             label: 'Home',
-
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.book),

@@ -48,13 +48,15 @@ class ApiService {
       throw Exception('Failed to Register: ${response.body}');
     }
   }
-  Future<Map<String, dynamic>> addKaryawan(String name, String email, String no_hp, String no_bp) async {
+
+  Future<Map<String, dynamic>> addKaryawan(String name,String noBp,String noHp, String email, String inputDate) async {
     final Uri uri = Uri.parse('$baseUrl/karyawan');
     final Map<String, String> body = {
       'name': name,
       'email': email,
-      'no_hp': no_hp,
-      'no_bp': no_bp,
+      'no_bp': noBp,
+      'no_hp': noHp,
+      'input_date': inputDate,
     };
 
     final http.Response response = await http.post(uri, body: body);
@@ -66,49 +68,44 @@ class ApiService {
     }
   }
 
-  // static Future<Map<String, dynamic>> updateKaryawan(String id, Map<String, dynamic> data) async {
-  //   final response = await http.put(
-  //     Uri.parse('http://127.0.0.1:8000/api/karyawan/$id'),
-  //     body: jsonEncode(data),
-  //     headers: {'Content-Type': 'application/json'},
-  //   );
-  //
-  //   if (response.statusCode == 200) {
-  //     return jsonDecode(response.body);
-  //   } else {
-  //     throw Exception('Failed to update karyawan');
-  //   }
-  // }
+  Future<Map<String, dynamic>> updateKaryawan(int id, String name, String noBp, String noHp, String email, String inputDate) async {
+    final Uri uri = Uri.parse('$baseUrl/karyawan/$id');
 
-  Future<Map<String, dynamic>> updateKaryawan(int karyawanId, String name, String no_bp, String no_hp,String email) async {
-    final response = await http.put(
-      Uri.parse('$baseUrl/karyawan/$karyawanId'),
-      body: {'name': name, 'no_bp': no_bp, 'no_hp': no_hp, 'email': email},
-    );
+    final Map<String, String> body = {
+      'name': name,
+      'no_bp': noBp,
+      'no_hp': noHp,
+      'email': email,
+      'input_date': inputDate,
+    };
 
-    if (response.statusCode == 200) {
-      return json.decode(response.body);
-    } else {
-      throw Exception('Failed to update user');
+    try {
+      final http.Response response = await http.put(uri, body: body);
+      if (response.statusCode == 200) {
+        return json.decode(response.body);
+      } else {
+        throw Exception('Failed to update karyawan: ${response.body}');
+      }
+    } catch (e) {
+      throw Exception('Failed to update karyawan: $e');
     }
   }
 
-  // static Future<void> deleteKaryawan(String id) async {
-  //   final response = await http.delete(
-  //     Uri.parse('$baseUrl/karyawan/$id'),
-  //   );
-  //
-  //   if (response.statusCode != 200) {
-  //     throw Exception('Failed to delete karyawan');
-  //   }
-  // }
-  Future<void> deleteKaryawan(int id) async {
-    final response = await http.delete(
-      Uri.parse('$baseUrl/karyawan/$id'),
-    );
-
-    if (response.statusCode != 200) {
-      throw Exception('Failed to delete karyawan');
+  Future<Map<String, dynamic>> getUserProfile(int userId) async {
+    try {
+      final response = await http.get(
+          Uri.parse('http://127.0.0.1:8000/api/user/$userId'));
+      if (response.statusCode == 200) {
+        final userData = json.decode(response.body);
+        return {
+          'name': userData['name'],
+          'email': userData['email'],
+        };
+      } else {
+        throw Exception('Failed to load user profile');
+      }
+    } catch (e) {
+      throw Exception('Failed to load user profile: $e');
     }
   }
 
