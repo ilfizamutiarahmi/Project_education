@@ -1,39 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:project_education/model/api_service.dart';
-import 'package:project_education/view/addKaryawan.dart';
-
-import '../model/karyawan_model.dart';
-import 'dart:convert';
+import 'package:project_education/model/karyawan_model.dart';
 import 'package:http/http.dart' as http;
+import 'package:project_education/view/addKaryawan.dart';
+import 'package:project_education/view/editKaryawan.dart';
 
-// import 'addEditKaryawan.dart';
 import 'detailKaryawan.dart';
 
-class ListKaryawan extends StatefulWidget {
-  // const ListKaryawan({super.key, required int userId, required String userName, required String userEmail, required ApiService apiService});
-  const ListKaryawan({
-    Key? key,
-    required this.userId,
-    required this.userName,
-    required this.userEmail,
-    required this.apiService,
-  }) : super(key: key);
-
-  final int userId;
-  final String userName;
-  final String userEmail;
-  final ApiService apiService;
+class KaryawanPage extends StatefulWidget {
+  const KaryawanPage({super.key});
 
   @override
-  _ListKaryawan createState() => _ListKaryawan();
+  State<KaryawanPage> createState() => _KaryawanPageState();
 }
 
-class _ListKaryawan extends State<ListKaryawan> {
-  TextEditingController _searchController = TextEditingController();
-  List<dynamic> _karyawanList = [];
-  List<dynamic> _filteredKaryawanList = [];
-
-  // Datum? get result => null;
+class _KaryawanPageState extends State<KaryawanPage> {
+  List<Result> karyawanList = [];
+  List<Result> searchResults = [];
+  TextEditingController controller = TextEditingController();
 
   @override
   void initState() {
@@ -42,24 +25,55 @@ class _ListKaryawan extends State<ListKaryawan> {
   }
 
   Future<void> fetchKaryawan() async {
-    final response = await http.get(Uri.parse('http://127.0.0.1:8000/api/karyawan'));
-
-    if (response.statusCode == 200) {
-      final Map<String, dynamic> responseData = json.decode(response.body);
+    try {
+      final response = await http.get(
+        Uri.parse("http://127.0.0.1:8000/api/karyawan"),
+      );
+      final data = listKaryawanFromJson(response.body);
       setState(() {
-        _karyawanList = responseData['result'];
-        _filteredKaryawanList = _karyawanList;
+        karyawanList = data.result;
+        searchResults = List.from(karyawanList);
       });
-    } else {
-      throw Exception('Failed to load karyawan');
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.toString())),
+      );
     }
   }
 
-  void _filterKaryawan(String query) {
+  Future<void> deleteKaryawan(int id) async {
+    try {
+      final response = await http.delete(
+        Uri.parse('http://127.0.0.1:8000/api/karyawan/$id'),
+      );
+      if (response.statusCode == 200) {
+        print('Karyawan deleted successfully');
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Data Berhasil di hapus'),
+          backgroundColor: Colors.green,));
+        setState(() {
+          searchResults.removeWhere((karyawan) => karyawan.id == id);
+        });
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Data gagal di hapus'),
+          backgroundColor: Colors.red,));
+        print('Failed to delete karyawan: ${response.body}');
+      }
+    } catch (e) {
+      print('Error deleting karyawan: $e');
+    }
+  }
+
+  void searchKaryawan(String query) {
     setState(() {
-      _filteredKaryawanList = _karyawanList
-          .where((karyawan) => karyawan['name'].toLowerCase().contains(query.toLowerCase()))
-          .toList();
+      if (query.isNotEmpty) {
+        searchResults = karyawanList
+            .where((result) =>
+        result.name.toLowerCase().contains(query.toLowerCase()) ||
+            result.noBp.toLowerCase().contains(query.toLowerCase()))
+            .toList();
+      } else {
+        searchResults = List.from(karyawanList);
+      }
     });
   }
 
@@ -67,130 +81,93 @@ class _ListKaryawan extends State<ListKaryawan> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Search Pegawai'),
-        backgroundColor: Colors.cyan,
+        title: Text("List Karyawan"),
+        backgroundColor: Colors.green,
         actions: [
           IconButton(
-            icon: Icon(Icons.add), // Icon untuk create (tambah karyawan)
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(
-                  builder: (context) => CreatePage(),
-                ),
+                MaterialPageRoute(builder: (context) => AddKaryawan()),
               );
             },
-          ),
+            icon: Icon(Icons.add),
+          )
         ],
       ),
       body: Column(
-        children: <Widget>[
+        children: [
           Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(8),
             child: TextField(
-              controller: _searchController,
-              onChanged: (value) {
-                _filterKaryawan(value);
-              },
-
+              onChanged: searchKaryawan,
+              controller: controller,
               decoration: InputDecoration(
-                labelText: 'Search',
-                border: OutlineInputBorder(),
+                labelText: "Search",
+                prefix: Icon(Icons.search),
               ),
             ),
           ),
           Expanded(
             child: ListView.builder(
-              itemCount: _filteredKaryawanList.length,
+              itemCount: searchResults.length,
               itemBuilder: (context, index) {
-                final karyawan = _filteredKaryawanList[index];
-                return Card(
-                  child: ListTile(
+                Result data = searchResults[index];
+                return Padding(
+                  padding: EdgeInsets.all(2),
+                  child: GestureDetector(
                     onTap: () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => DetailKaryawanPage(karyawan: karyawan),
+                          builder: (context) => DetailKaryawan(data: data),
                         ),
                       );
                     },
-                    title: Text(karyawan['name']),
-                    subtitle: Text(karyawan['no_bp']),
-                    trailing: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        // IconButton(
-                        //   icon: Icon(Icons.edit), // Icon untuk update (edit karyawan)
-                        //   onPressed: () {
-                        //     Navigator.push(
-                        //       context,
-                        //       MaterialPageRoute(
-                        //         builder: (context) => AddEditKaryawanPage(apiService: widget.apiService, karyawan: karyawan),
-                        //       ),
-                        //     );
-                        //   },
-                        // ),
-                        IconButton(
-                          icon: Icon(Icons.delete), // Icon untuk delete (hapus karyawan)
-                          onPressed: () {
-                            showDialog(
-                              context: context,
-                              builder: (context) {
-                                return AlertDialog(
-                                  title: Text('Konfirmasi'),
-                                  content: Text('Anda yakin ingin menghapus ${karyawan.name}?'),
-                                  actions: [
-                                    TextButton(
-                                      onPressed: () => Navigator.pop(context),
-                                      child: Text('Batal'),
-                                    ),
-                                    TextButton(
-                                      onPressed: () async {
-                                        try {
-                                          // await ApiService.deleteKaryawan(karyawan.id);
-                                          Navigator.pop(context); // Tutup dialog
-                                          // Refresh halaman setelah penghapusan berhasil
-                                          Navigator.pushReplacement(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) => ListKaryawan(
-                                                userId: widget.userId,
-                                                userName: widget.userName,
-                                                userEmail: widget.userEmail,
-                                                apiService: widget.apiService,
-                                              ),
-                                            ),
-                                          );
-                                        } catch (error) {
-                                          showDialog(
-                                            context: context,
-                                            builder: (context) {
-                                              return AlertDialog(
-                                                title: Text('Error'),
-                                                content: Text('Gagal menghapus karyawan: $error'),
-                                                actions: <Widget>[
-                                                  TextButton(
-                                                    onPressed: () {
-                                                      Navigator.of(context).pop();
-                                                    },
-                                                    child: Text('OK'),
-                                                  ),
-                                                ],
-                                              );
-                                            },
-                                          );
-                                        }
-                                      },
-                                      child: Text('Hapus'),
-                                    ),
-                                  ],
-                                );
-                              },
-                            );
-                            // Tambahkan logika untuk menghapus karyawan
-                          },
-                        ),
-                      ],
+                    child: Card(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          ListTile(
+                            title: Text(
+                              "${data.name}",
+                              style: TextStyle(
+                                color: Colors.black54,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            subtitle: Text(
+                              "${data.noBp}",
+                              style: TextStyle(
+                                fontSize: 10,
+                                color: Colors.black54,
+                              ),
+                            ),
+                            trailing: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                IconButton(
+                                  onPressed: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => UpdateKaryawan(karyawan: data),
+                                      ),
+                                    );
+                                  },
+                                  icon: Icon(Icons.edit),
+                                ),
+                                IconButton(
+                                  onPressed: () {
+                                    deleteKaryawan(data.id);
+                                  },
+                                  icon: Icon(Icons.delete),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 );
@@ -202,4 +179,3 @@ class _ListKaryawan extends State<ListKaryawan> {
     );
   }
 }
-

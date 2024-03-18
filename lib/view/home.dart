@@ -132,6 +132,11 @@ class _HomeState extends State<Home> {
             },
             icon: Icon(Icons.refresh),
           ),
+          // IconButton(onPressed: (){
+          //   Navigator.push(context,
+          //       MaterialPageRoute(builder: (context) => GaleriPage()));
+          // }, icon: Icon(Icons.image)
+          // ),
           IconButton(onPressed: (){
             Navigator.push(context,
                 MaterialPageRoute(builder: (context) => GaleriPage()));
@@ -213,11 +218,11 @@ class _HomeState extends State<Home> {
             if(_currentIndex == 0){
               // Handler untuk indeks 0 (Home)
             }
-            // else if(_currentIndex == 1){
-            //   Navigator.push(context, MaterialPageRoute(builder: (context)=>KaryawanPage()));
-            // }
+            else if(_currentIndex == 1){
+              Navigator.push(context, MaterialPageRoute(builder: (context)=>KaryawanPage()));
+            }
             else if(_currentIndex == 2){
-              _goToUserProfile();
+              _goToUserProfile(); // Handler untuk indeks 2 (Profile)
             }
           });
         },
