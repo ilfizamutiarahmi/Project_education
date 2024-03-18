@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:project_education/model/model_berita.dart'; // Pastikan untuk mengganti dengan nama file yang sesuai dengan model Anda
+import 'package:project_education/model/model_berita.dart';
 import 'package:http/http.dart' as http;
 import 'package:project_education/view/detailListBerita.dart';
 import 'package:project_education/view/galeri.dart';
@@ -204,6 +204,7 @@ class _HomeState extends State<Home> {
           ],
         ),
       ),
+      
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
         onTap: (int index) {

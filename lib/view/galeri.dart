@@ -55,25 +55,9 @@ class _GaleriPageState extends State<GaleriPage> {
                 );
               },
               child: Padding(
-                padding: EdgeInsets.all(8.0),
+                padding: EdgeInsets.all(3.0),
                 child: GridTile(
-                  footer: Container(
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        border: Border.all(width: 1, color: Colors.black54)
-                    ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Text(galeri.image,
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 16
-                          ),
-                        )
-                      ],
-                    ),
-                  ), child: Image.network('http://127.0.0.1:8000/storage/${galeri.image}'),
+                   child: Image.network('http://127.0.0.1:8000/storage/${galeri.image}'),
                 ),
               ),
             );
