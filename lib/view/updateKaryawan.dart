@@ -1,61 +1,77 @@
 import 'package:flutter/material.dart';
 import 'package:project_education/model/api_service.dart';
-import 'package:project_education/view/listKaryawan.dart';
+import 'package:project_education/view/karyawan.dart';
 import 'package:intl/intl.dart';
+import 'package:project_education/model/model_karyawan.dart';
 
-class AddKaryawan extends StatefulWidget {
-  const AddKaryawan({super.key});
+class UpdateKaryawan extends StatefulWidget {
+  final Result karyawan;
+
+  const UpdateKaryawan({Key? key, required this.karyawan}) : super(key: key);
 
   @override
-  State<AddKaryawan> createState() => _AddKaryawanState();
+  State<UpdateKaryawan> createState() => _UpdateKaryawanState();
 }
 
-class _AddKaryawanState extends State<AddKaryawan> {
+class _UpdateKaryawanState extends State<UpdateKaryawan> {
   final ApiService apiService = ApiService(baseUrl: 'http://127.0.0.1:8000/api');
-  final TextEditingController nameController = TextEditingController();
-  final TextEditingController noBpController = TextEditingController();
-  final TextEditingController noHpController = TextEditingController();
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController inputDateController = TextEditingController();
+  late TextEditingController nameController;
+  late TextEditingController noBpController;
+  late TextEditingController noHpController;
+  late TextEditingController emailController;
+  late TextEditingController inputDateController;
 
   final GlobalKey<FormState> keyForm = GlobalKey<FormState>();
 
   bool isDateSelected = false;
 
-  void _karyawan() async {
-    if(keyForm.currentState!.validate()){
+  @override
+  void initState() {
+    super.initState();
+    nameController = TextEditingController(text: widget.karyawan.name);
+    noBpController = TextEditingController(text: widget.karyawan.noBp);
+    noHpController = TextEditingController(text: widget.karyawan.noHp);
+    emailController = TextEditingController(text: widget.karyawan.email);
+    inputDateController = TextEditingController(text: widget.karyawan.inputDate.toString());
+  }
+
+  void _updateKaryawan() async {
+    if (keyForm.currentState!.validate()) {
       final name = nameController.text;
       final noBp = noBpController.text;
       final noHp = noHpController.text;
       final email = emailController.text;
       final inputDate = inputDateController.text;
 
-      try{
-        final response = await apiService.addKaryawan(name, noBp, noHp, email, inputDate);
+      try {
+        final response = await apiService.updateKaryawan(widget.karyawan.id, name, noBp, noHp, email, inputDate);
         final karyawan = response['karyawan'];
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>KaryawanPage()));
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Data Karyawan berhasil di tambah. reload untuk melihat data baru'),
-          backgroundColor: Colors.green,));
-      }catch(e){
-        print('Penambahan data gagal : $e');
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Penambahan data gagal : $e'),
-          backgroundColor: Colors.red,));
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => KaryawanPage()));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('Data Karyawan berhasil diupdate. Silakan muat ulang untuk melihat data baru'),
+          backgroundColor: Colors.green,
+        ));
+      } catch (e) {
+        print('Update data gagal: $e');
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('Update data gagal: $e'),
+          backgroundColor: Colors.red,
+        ));
       }
-
     }
   }
 
-  Future selectDate() async{
+  Future selectDate() async {
     DateTime? pickedDate = await showDatePicker(
       context: context,
       firstDate: DateTime(1950),
-      initialDate: DateTime.now(),
+      initialDate: DateFormat("yyyy-MM-dd HH:mm:ss").parse(widget.karyawan.inputDate as String),
       lastDate: DateTime(2100),
     );
     if (pickedDate != null) {
       TimeOfDay? pickedTime = await showTimePicker(
         context: context,
-        initialTime: TimeOfDay.now(),
+        initialTime: TimeOfDay.fromDateTime(DateFormat("yyyy-MM-dd HH:mm:ss").parse(widget.karyawan.inputDate as String)),
       );
       if (pickedTime != null) {
         setState(() {
@@ -73,13 +89,11 @@ class _AddKaryawanState extends State<AddKaryawan> {
     }
   }
 
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Tambah data Karyawan'),
+        title: Text('Update Data Karyawan'),
         backgroundColor: Colors.blue,
       ),
       body: Form(
@@ -100,7 +114,7 @@ class _AddKaryawanState extends State<AddKaryawan> {
                 controller: nameController,
                 decoration: InputDecoration(labelText: 'Name', border: OutlineInputBorder()),
               ),
-              SizedBox(height: 10,),
+              SizedBox(height: 10),
               TextFormField(
                 validator: (value) {
                   if (value!.isEmpty) {
@@ -111,7 +125,7 @@ class _AddKaryawanState extends State<AddKaryawan> {
                 controller: noBpController,
                 decoration: InputDecoration(labelText: 'NoBp', border: OutlineInputBorder()),
               ),
-              SizedBox(height: 10,),
+              SizedBox(height: 10),
               TextFormField(
                 validator: (value) {
                   if (value!.isEmpty) {
@@ -122,21 +136,21 @@ class _AddKaryawanState extends State<AddKaryawan> {
                 controller: noHpController,
                 decoration: InputDecoration(labelText: 'NoHp', border: OutlineInputBorder()),
               ),
-              SizedBox(height: 10,),
+              SizedBox(height: 10),
               TextFormField(
                 validator: (value) {
                   if (value!.isEmpty) {
-                    return 'email tidak boleh kosong';
+                    return 'Email tidak boleh kosong';
                   }
                   return null;
                 },
                 controller: emailController,
                 decoration: InputDecoration(labelText: 'Email', border: OutlineInputBorder()),
               ),
-              SizedBox(height: 10,),
+              SizedBox(height: 10),
               TextFormField(
-                onTap: (){
-                  if(!isDateSelected) {
+                onTap: () {
+                  if (!isDateSelected) {
                     selectDate();
                   }
                 },
@@ -149,10 +163,10 @@ class _AddKaryawanState extends State<AddKaryawan> {
                 controller: inputDateController,
                 decoration: InputDecoration(labelText: 'Input Date', border: OutlineInputBorder()),
               ),
-              SizedBox(height: 10,),
+              SizedBox(height: 10),
               MaterialButton(
-                onPressed: _karyawan,
-                child: Text('Tambah data'),
+                onPressed: _updateKaryawan,
+                child: Text('Update data'),
                 color: Colors.blue,
               ),
             ],

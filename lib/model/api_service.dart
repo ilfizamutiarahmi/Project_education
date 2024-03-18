@@ -53,9 +53,9 @@ class ApiService {
     final Uri uri = Uri.parse('$baseUrl/karyawan');
     final Map<String, String> body = {
       'name': name,
-      'email': email,
       'no_bp': noBp,
       'no_hp': noHp,
+      'email': email,
       'input_date': inputDate,
     };
 
@@ -64,7 +64,7 @@ class ApiService {
     if (response.statusCode == 201) {
       return json.decode(response.body);
     } else {
-      throw Exception('Failed to Add Pegawai: ${response.body}');
+      throw Exception('Failed to Register: ${response.body}');
     }
   }
 

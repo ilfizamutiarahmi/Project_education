@@ -16,8 +16,8 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
-  _goHome();
-  super.initState();
+    _goHome();
+    super.initState();
 
   }
 
@@ -37,17 +37,11 @@ class _SplashScreenState extends State<SplashScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        color: Color.fromARGB(255, 255, 255, 255),
+        color: Colors.blue, // Replace with your desired color
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Image.asset(
-                'assets/edukasi.jpg',
-                width: 150,
-                height: 150,
-              ),
-              SizedBox(height: 10),
               Text(
                 'Welcome to Education Application!',
                 style: TextStyle(

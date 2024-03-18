@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:project_education/model/karyawan_model.dart';
+import 'package:project_education/model/model_karyawan.dart';
 import 'package:http/http.dart' as http;
-import 'package:project_education/view/addKaryawan.dart';
-import 'package:project_education/view/editKaryawan.dart';
+import 'package:project_education/view/add_karyawan.dart';
+import 'package:project_education/view/updateKaryawan.dart';
 
-import 'detailKaryawan.dart';
+import 'detail_karyawan.dart';
 
 class KaryawanPage extends StatefulWidget {
   const KaryawanPage({super.key});

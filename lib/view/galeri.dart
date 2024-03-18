@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:project_education/view/detailGaleri.dart';
+import 'package:project_education/view/detailgaleri.dart';
 
 import '../model/model_galeri.dart';
 
@@ -41,31 +41,42 @@ class _GaleriPageState extends State<GaleriPage> {
         backgroundColor: Colors.blue,
       ),
       body: GridView.builder(
-        itemCount: listGaleri.length,
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2), 
+          itemCount: listGaleri.length,
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
           itemBuilder: (context, index){
-          final galeri = listGaleri[index];
-          return GestureDetector(
-            onTap: (){
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => DetailGaleriPage(data: galeri),
-                ),
-              );
-            },
-            child: Padding(
-              padding: EdgeInsets.all(8.0),
-              child: GridTile(
-                footer: Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    border: Border.all(width: 1, color: Colors.black54)
+            final galeri = listGaleri[index];
+            return GestureDetector(
+              onTap: (){
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => DetailGaleriPage(data: galeri),
                   ),
-                ), child: Image.network('http://127.0.0.1:8000/storage/${galeri.image}'),
+                );
+              },
+              child: Padding(
+                padding: EdgeInsets.all(8.0),
+                child: GridTile(
+                  footer: Container(
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(width: 1, color: Colors.black54)
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Text(galeri.image,
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 16
+                          ),
+                        )
+                      ],
+                    ),
+                  ), child: Image.network('http://127.0.0.1:8000/storage/${galeri.image}'),
+                ),
               ),
-            ),
-          );
+            );
           }),
     );
   }

@@ -36,10 +36,10 @@ class ModelBerita {
   }
 
   Map<String, dynamic> toJson() => {
-        // // "isSuccess": isSuccess,
-        "message": message,
-        "result": List<dynamic>.from(result.map((x) => x.toJson())),
-      };
+    // // "isSuccess": isSuccess,
+    "message": message,
+    "result": List<dynamic>.from(result.map((x) => x.toJson())),
+  };
 }
 
 class Datum {
@@ -67,8 +67,8 @@ class Datum {
   }
 
   Map<String, dynamic> toJson() => {
-        "title": title,
-        "content": content,
-        "image": image,
-      };
+    "title": title,
+    "content": content,
+    "image": image,
+  };
 }

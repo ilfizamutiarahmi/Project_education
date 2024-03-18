@@ -1,19 +1,20 @@
+
 import 'dart:convert';
 
-ListKaryawan listKaryawanFromJson(String str) => ListKaryawan.fromJson(json.decode(str));
+ListUser listUserFromJson(String str) => ListUser.fromJson(json.decode(str));
 
-String listKaryawanToJson(ListKaryawan data) => json.encode(data.toJson());
+String listUserToJson(ListUser data) => json.encode(data.toJson());
 
-class ListKaryawan {
+class ListUser {
   String message;
   List<Result> result;
 
-  ListKaryawan({
+  ListUser({
     required this.message,
     required this.result,
   });
 
-  factory ListKaryawan.fromJson(Map<String, dynamic> json) => ListKaryawan(
+  factory ListUser.fromJson(Map<String, dynamic> json) => ListUser(
     message: json["message"],
     result: List<Result>.from(json["result"].map((x) => Result.fromJson(x))),
   );
@@ -27,40 +28,27 @@ class ListKaryawan {
 class Result {
   int id;
   String name;
-  String noBp;
-  String noHp;
   String email;
-  DateTime inputDate;
+  String password;
 
   Result({
     required this.id,
     required this.name,
-    required this.noBp,
-    required this.noHp,
     required this.email,
-    required this.inputDate,
+    required this.password,
   });
 
   factory Result.fromJson(Map<String, dynamic> json) => Result(
     id: json["id"],
     name: json["name"],
-    noBp: json["no_bp"],
-    noHp: json["no_hp"],
     email: json["email"],
-    inputDate: DateTime.parse(json["input_date"]),
+    password: json["password"],
   );
 
   Map<String, dynamic> toJson() => {
     "id": id,
     "name": name,
-    "no_bp": noBp,
-    "no_hp": noHp,
     "email": email,
-    "input_date": inputDate.toIso8601String(),
+    "password": password,
   };
 }
-
-
-
-
-

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:project_education/model/model_berita.dart';
+import 'package:project_education/model/model_berita.dart'; // Pastikan untuk mengganti dengan nama file yang sesuai dengan model Anda
 import 'package:http/http.dart' as http;
-import 'package:project_education/view/detailBerita.dart';
-import 'package:project_education/view/login.dart';
+import 'package:project_education/view/detailListBerita.dart';
 import 'package:project_education/view/galeri.dart';
-import 'package:project_education/view/listKaryawan.dart';
+import 'package:project_education/view/karyawan.dart';
+import 'package:project_education/view/login.dart';
 import 'package:project_education/view/user_profile.dart';
 import '../model/api_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -132,16 +132,10 @@ class _HomeState extends State<Home> {
             },
             icon: Icon(Icons.refresh),
           ),
-          // IconButton(onPressed: (){
-          //   Navigator.push(context,
-          //       MaterialPageRoute(builder: (context) => GaleriPage()));
-          // }, icon: Icon(Icons.image)
-          // ),
           IconButton(onPressed: (){
             Navigator.push(context,
                 MaterialPageRoute(builder: (context) => GaleriPage()));
-          }, 
-          icon: Icon(Icons.image)
+          }, icon: Icon(Icons.image)
           ),
           IconButton(onPressed: (){
             Navigator.pushReplacement(context,
@@ -197,7 +191,7 @@ class _HomeState extends State<Home> {
                             ListTile(
                               title: Text(result.title),
                               subtitle: Text(result.content,
-                              maxLines: 2,),
+                                maxLines: 2,),
                             ),
                           ],
                         ),

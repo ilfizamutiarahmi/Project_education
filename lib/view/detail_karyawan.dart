@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:project_education/model/karyawan_model.dart';
+import 'package:project_education/model/model_karyawan.dart';
 
 class DetailKaryawan extends StatefulWidget {
   final Result? data;
