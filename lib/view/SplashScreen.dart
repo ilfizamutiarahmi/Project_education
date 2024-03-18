@@ -37,11 +37,17 @@ class _SplashScreenState extends State<SplashScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        color: Colors.blue, // Replace with your desired color
+        color: Color.fromARGB(255, 255, 255, 255),
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              Image.asset(
+                'assets/edukasi.jpg',
+                width: 150,
+                height: 150,
+              ),
+              SizedBox(height: 10),
               Text(
                 'Welcome to Education Application!',
                 style: TextStyle(
